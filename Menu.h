@@ -14,6 +14,7 @@ private:
 	sf::Texture addingPointsTexture;
 	sf::Texture deletingPointsTexture;
 	sf::Texture loadingPointsTexture;
+	sf::RectangleShape* palette;
 	bool isTheAddActive;
 	bool isTheDeleteActive;
 
@@ -30,6 +31,12 @@ public:
 	void intializeAddButton();
 	void intializeDeleteButton();
 	void intializeLoadButton();
+	void initializeColorPalette();
+	void displayColorPalette();
+	void pressAddButton(sf::Vector2i mousePosition);
+	void pressDeleteButton(sf::Vector2i mousePosition);
+	void pressLoadButton(sf::Vector2i mousePosition);
+	void EventConditions();
 	void displayMenu();
 };
 
