@@ -1,4 +1,6 @@
 #include"Menu.h"
+
+
 Menu::Menu() {
 	isTheAddActive = false;
 	isTheDeleteActive = false;
@@ -8,6 +10,7 @@ Menu::Menu() {
 	intializeDeleteButton();
 	intializeLoadButton();
 	displayWindow();
+	displayColorPalette();
 
 }
 
@@ -18,16 +21,7 @@ Menu::~Menu() {
 void Menu::displayWindow() {
 	while (window->isOpen()) {
 		while (window->pollEvent(evnt)) {
-			switch (evnt.type) {
-			case sf::Event::Closed:
-				window->close();
-				break;
-			case sf::Event::MouseButtonPressed:
-				if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-					sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
-					std::cout << "( " << mousePosition.x << ", " << mousePosition.y << ")\n";
-				}
-			}
+			EventConditions();
 		}
 		displayMenu();
 
@@ -69,6 +63,65 @@ void Menu::intializeLoadButton() {
 	loadingPointsTexture.loadFromFile("Load_button.png");
 	loadRouteButton.setTexture(&loadingPointsTexture);
 
+}
+
+void Menu::initializeColorPalette() {
+	palette = new sf::RectangleShape(sf::Vector2f(300, 300));
+	sf::Texture* paletteTexture = new sf::Texture;
+	paletteTexture->loadFromFile("color_palette.png");
+	palette->setTexture(paletteTexture);
+	palette->setPosition(sf::Vector2f(830.f, 668.f));
+}
+
+void Menu::displayColorPalette() {
+	while (isTheAddActive && !isTheDeleteActive) {
+		window->clear(sf::Color::White);
+		window->draw(map);
+		window->draw(addPointButton);
+		window->draw(deletePointButton);
+		window->draw(loadRouteButton);
+		window->draw(*palette);
+		window->display();
+	}
+}
+
+void Menu::pressAddButton(sf::Vector2i mousePosition) {
+	if (((mousePosition.x >= 860) && (mousePosition.x <= 1145)) && ((mousePosition.y >= 100) && (mousePosition.y <= 195))) {
+		isTheAddActive = true;
+		isTheDeleteActive = false;
+		std::cout << "adding button\n";
+	}
+}
+
+void Menu::pressDeleteButton(sf::Vector2i mousePosition) {
+	if (((mousePosition.x >= 850) && (mousePosition.x <= 1145)) && ((mousePosition.y >= 300) && (mousePosition.y <= 400))) {
+		isTheAddActive = false;
+		isTheDeleteActive = true;
+		std::cout << "deleting button\n";
+	}
+}
+
+void Menu::pressLoadButton(sf::Vector2i mousePosition) {
+	if (((mousePosition.x >= 850) && (mousePosition.x <= 1145)) && ((mousePosition.y >= 500) && (mousePosition.y <= 600))) {
+		std::cout << "loading Route\n";
+	}
+}
+
+void Menu::EventConditions() {
+	switch (evnt.type) {
+	case sf::Event::Closed:
+		window->close();
+		break;
+	case sf::Event::MouseButtonPressed:
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+			sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
+			pressAddButton(mousePosition);
+			pressDeleteButton(mousePosition);
+			pressLoadButton(mousePosition);
+
+			std::cout << "( " << mousePosition.x << ", " << mousePosition.y << ")\n";
+		}
+	}
 }
 
 void Menu::displayMenu() {
