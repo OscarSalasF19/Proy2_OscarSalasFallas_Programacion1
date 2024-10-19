@@ -8,6 +8,7 @@ Menu::Menu() {
 	intializeDeleteButton();
 	intializeLoadButton();
 	initializeColorPalette();
+	initializePoint();
 	displayWindow();
 }
 
@@ -28,6 +29,7 @@ void Menu::displayWindow() {
 		if (AddPoints->getStatus() == true) {
 			displayColorPalette();
 		}
+		window->draw(point->getPoint());
 		window->display();
 	}
 }
@@ -65,7 +67,6 @@ void Menu::initializeColorPalette() {
 
 void Menu::displayColorPalette() {
 	window->draw(Palette->displayButton());
-	window->display();
 }
 
 void Menu::eventScenarios() {
@@ -104,4 +105,8 @@ void Menu::pressLoadButton(sf::Vector2i mousePosition) {
 	if (((mousePosition.x >= 850) && (mousePosition.x <= 1145)) && ((mousePosition.y >= 500) && (mousePosition.y <= 600))) {
 		std::cout << "loading Route\n";
 	}
+}
+
+void Menu::initializePoint() {
+	point = new Point(sf::Vector2f(386.f, 100.f), sf::Color(22, 24, 152));
 }
