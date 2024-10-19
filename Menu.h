@@ -2,6 +2,7 @@
 #include<iostream>
 #include<SFML/Graphics.hpp>
 #include"Button.h"
+#include"point.h"
 class Menu
 {
 private:
@@ -21,6 +22,7 @@ private:
 
 	Button* Palette;
 
+	Point* point;
 public:
 	Menu();
 
@@ -51,5 +53,7 @@ public:
 	void pressDeleteButton(sf::Vector2i mousePosition);
 
 	void pressLoadButton(sf::Vector2i mousePosition);
+
+	void initializePoint();
 
 };
