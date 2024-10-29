@@ -4,23 +4,27 @@ class Button
 {
 private:
 	sf::RectangleShape button;
-	sf::Texture buttonTexture;
 	bool isTheButtonActive;
+	sf::Font buttonFont;
+	sf::Text buttonName;
 
 public:
 	Button();
 
 	~Button();
 
-	Button(std::string textureLocation, sf::Vector2f buttonSize, sf::Vector2f buttonPosition);
+	Button(std::string buttonName, sf::Vector2f buttonSize, sf::Vector2f buttonPosition);
 
 	void initializeButton(sf::Vector2f buttonSize, sf::Vector2f buttonPosition);
 
-	void loadTexture(std::string textureLocation);
+	void loadText(std::string buttonName);
 
-	sf::RectangleShape displayButton();
+	void displayButton(sf::RenderWindow& window);
 
 	bool getStatus();
 
 	void setStatus(bool status);
+
+	sf::RectangleShape getButton();
 };
+
