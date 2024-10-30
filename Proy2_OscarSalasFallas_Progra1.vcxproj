@@ -132,6 +132,7 @@
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="Palette.cpp" />
     <ClCompile Include="point.cpp" />
     <ClCompile Include="Proyect.cpp" />
     <ClCompile Include="Route.cpp" />
@@ -140,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Palette.h" />
     <ClInclude Include="point.h" />
     <ClInclude Include="Route.h" />
     <ClInclude Include="Server.h" />

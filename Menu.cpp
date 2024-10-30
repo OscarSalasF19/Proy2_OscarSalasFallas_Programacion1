@@ -2,13 +2,15 @@
 
 
 Menu::Menu() {
+	for (int i = 0; i < 3; i++) {
+		currentColor[i] = 0;
+	}
+	currentEvent = 0;
 	initializeWindow();
 	intializeMap();
 	intializeAddButton();
-	intializeDeleteButton();
 	intializeLoadButton();
-	initializeColorPalette();
-	initializePoint();
+	intializeExitButton();
 	displayWindow();
 }
 
@@ -21,17 +23,23 @@ void Menu::displayWindow() {
 		while (window->pollEvent(evnt)) {
 			eventScenarios();
 		}
-		window->clear(sf::Color::White);
-		window->draw(map);
-		window->draw(AddPoints->displayButton());
-		window->draw(deletePoints->displayButton());
-		window->draw(loadPoints->displayButton());
-		if (AddPoints->getStatus() == true) {
-			displayColorPalette();
-		}
-		window->draw(point->getPoint());
+		displayMainMenu();
+		displayRouteMenu();
 		window->display();
 	}
+}
+
+void Menu::displayMainMenu() {
+	if (createRoute->getStatus() == false && loadRoutes->getStatus() == false) {
+		window->clear(sf::Color::White);
+		window->draw(map);
+		createRoute->displayButton(*window);
+		loadRoutes->displayButton(*window);
+		exit->displayButton(*window);
+
+
+	}
+
 }
 
 void Menu::loadTexture() {
@@ -49,24 +57,43 @@ void Menu::intializeMap() {
 	loadTexture();
 }
 void Menu::intializeAddButton() {
-	AddPoints = new Button("add_points.png", sf::Vector2f(300, 100), sf::Vector2f(850, 100));
+	createRoute = new Button("Create Route", sf::Vector2f(300, 100), sf::Vector2f(850, 100));
 }
 
-void Menu::intializeDeleteButton() {
-	deletePoints = new Button("Delete_Button.png", sf::Vector2f(300, 100), sf::Vector2f(850, 300));
-
-}
 void Menu::intializeLoadButton() {
-	loadPoints = new Button("Load_Button.png", sf::Vector2f(300, 100), sf::Vector2f(850, 500));
+	loadRoutes = new Button("Load Routes", sf::Vector2f(300, 100), sf::Vector2f(850, 300));
+
+}
+void Menu::intializeExitButton() {
+	exit = new Button("Exit", sf::Vector2f(300, 100), sf::Vector2f(850, 500));
 
 }
 
-void Menu::initializeColorPalette() {
-	Palette = new Button("color_palette.png", sf::Vector2f(300.f, 300.f), sf::Vector2f(830.f, 668.f));
-}
 
-void Menu::displayColorPalette() {
-	window->draw(Palette->displayButton());
+void Menu::displayRouteMenu() {
+	addPoints = new Button("add Points", sf::Vector2f(300, 100), sf::Vector2f(850, 30));
+	deletePoints = new Button("delete Points", sf::Vector2f(300, 100), sf::Vector2f(850, 230));
+	SaveRoute = new Button("Save Points", sf::Vector2f(300, 100), sf::Vector2f(850, 430));
+	palette = new Palette("color_palette.png", sf::Vector2f(300.f, 300.f), sf::Vector2f(850.f, 568.f));
+	exitRouteMenu = new Button("Exit", sf::Vector2f(300.f, 100), sf::Vector2f(850, 890));
+	if (createRoute->getStatus()) {
+		window->clear(sf::Color::White);
+		window->draw(map);
+		addPoints->displayButton(*window);
+		deletePoints->displayButton(*window);
+		SaveRoute->displayButton(*window);
+		window->draw(palette->displayButton());
+		exitRouteMenu->displayButton(*window);
+		currentRoute->drawPoints(window);
+	}
+	delete addPoints;
+	delete deletePoints;
+	delete SaveRoute;
+	delete palette;
+	delete exitRouteMenu;
+
+
+
 }
 
 void Menu::eventScenarios() {
@@ -74,39 +101,151 @@ void Menu::eventScenarios() {
 	case sf::Event::Closed:
 		window->close();
 		break;
-	case sf::Event::MouseButtonPressed:
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-			sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
+	case sf::Event::MouseButtonReleased:
+		if (evnt.key.code == sf::Mouse::Left) {
+			sf::Vector2f mousePosition;
+			mousePosition.x = sf::Mouse::getPosition(*window).x;
+			mousePosition.y = sf::Mouse::getPosition(*window).y;
+			std::cout << "( " << mousePosition.x << ", " << mousePosition.y << ")\n";
 			pressAddButton(mousePosition);
-			pressDeleteButton(mousePosition);
 			pressLoadButton(mousePosition);
+			pressExitButton(mousePosition);
+			if (createRoute->getStatus() == true) {
+				checkMouseRouteMenu(mousePosition);
+			}
+			if (currentEvent == 1 && mousePosition.x < 760.f) {
+				std::cout << "llegue a aqui" << std::endl;
+				currentRoute->addPoint(mousePosition, currentColor);
+			}
+			if (currentEvent == 2 && mousePosition.x < 760.f) {
+				std::cout << "empieza comprobacion" << std::endl;
+				currentRoute->checkClick(mousePosition);
+			}
+
+
+		}
+		break;
+	case sf::Event::KeyReleased:
+		if (evnt.key.code == sf::Keyboard::C) {
+			currentRoute->coutPoints();
 		}
 	}
 }
 
-void Menu::pressAddButton(sf::Vector2i mousePosition) {
-	if (((mousePosition.x >= 860) && (mousePosition.x <= 1145)) && ((mousePosition.y >= 100) && (mousePosition.y <= 195))) {
-		AddPoints->setStatus(true);
-		deletePoints->setStatus(false);
-		std::cout << "add Button" << std::endl;
-	}
-	std::cout << "( " << mousePosition.x << ", " << mousePosition.y << ")\n";
-}
-
-void Menu::pressDeleteButton(sf::Vector2i mousePosition) {
-	if (((mousePosition.x >= 850) && (mousePosition.x <= 1145)) && ((mousePosition.y >= 300) && (mousePosition.y <= 400))) {
-		AddPoints->setStatus(false);
-		deletePoints->setStatus(true);
-		std::cout << "deleting button\n";
+void Menu::pressAddButton(sf::Vector2f mousePosition) {
+	if (((mousePosition.x >= 860.f) && (mousePosition.x <= 1145.f)) && ((mousePosition.y >= 100.f) && (mousePosition.y <= 195.f)) && !createRoute->getStatus()) {
+		createRoute->setStatus(true);
+		loadRoutes->setStatus(false);
+		currentRoute = new Route();
+		std::cout << "Route Menu" << std::endl;
 	}
 }
 
-void Menu::pressLoadButton(sf::Vector2i mousePosition) {
-	if (((mousePosition.x >= 850) && (mousePosition.x <= 1145)) && ((mousePosition.y >= 500) && (mousePosition.y <= 600))) {
-		std::cout << "loading Route\n";
+void Menu::pressLoadButton(sf::Vector2f mousePosition) {
+	if (((mousePosition.x >= 850.f) && (mousePosition.x <= 1145.f)) && ((mousePosition.y >= 300.f) && (mousePosition.y <= 400.f)) && !createRoute->getStatus()) {
+		createRoute->setStatus(false);
+		loadRoutes->setStatus(true);
+		std::cout << "loading route\n";
 	}
 }
 
-void Menu::initializePoint() {
-	point = new Point(sf::Vector2f(386.f, 100.f), sf::Color(22, 24, 152));
+void Menu::pressExitButton(sf::Vector2f mousePosition) {
+	if (((mousePosition.x >= 850.f) && (mousePosition.x <= 1145.f)) && ((mousePosition.y >= 500.f) && (mousePosition.y <= 600.f)) && !createRoute->getStatus()) {
+		std::cout << "Closing program. \n";
+		window->close();
+	}
+}
+
+
+void Menu::checkMouseRouteMenu(sf::Vector2f mousePosition) {
+	if (mousePosition.x >= ((mousePosition.x >= 850) && (mousePosition.x <= 1150)) && ((mousePosition.y >= 25) && (mousePosition.y <= 125))) {
+		currentEvent = 1;
+		std::cout << "Add Points" << std::endl << currentEvent << std::endl;
+	}
+	if (((mousePosition.x >= 850) && (mousePosition.x <= 1150)) && ((mousePosition.y >= 230) && (mousePosition.y <= 330))) {
+		currentEvent = 2;
+		std::cout << "Delete Points" << std::endl << currentEvent << std::endl;
+	}
+	if (((mousePosition.x >= 850) && (mousePosition.x <= 1150)) && ((mousePosition.y >= 430) && (mousePosition.y <= 530))) {
+		std::cout << "saving Route" << std::endl;
+		currentEvent = 0;
+	}
+	if (((mousePosition.x >= 850) && (mousePosition.x <= 1150)) && ((mousePosition.y >= 890) && (mousePosition.y <= 985))) {
+		createRoute->setStatus(false);
+		std::cout << "closing route menu" << std::endl;
+		currentEvent = 0;
+	}
+	checkColorsClicks(mousePosition);
+}
+
+void Menu::checkColorsClicks(sf::Vector2f mousePosition) {
+	if (((mousePosition.x >= 850) && (mousePosition.x < 950)) && ((mousePosition.y >= 540) && (mousePosition.y <= 715))) {
+		std::cout << "Orange" << std::endl;
+		currentColor[0] = 240;
+		currentColor[1] = 150;
+		currentColor[2] = 130;
+		for (int i = 0; i < 3; i++) {
+			std::cout << currentColor[i] << " , ";
+		}
+		std::cout << std::endl;
+	}
+	if (((mousePosition.x >= 951) && (mousePosition.x <= 1050)) && ((mousePosition.y >= 540) && (mousePosition.y <= 715))) {
+		std::cout << "Pink" << std::endl;
+		currentColor[0] = 238;
+		currentColor[1] = 163;
+		currentColor[2] = 225;
+
+		for (int i = 0; i < 3; i++) {
+			std::cout << currentColor[i] << " , ";
+		}
+		std::cout << std::endl;
+	}
+	if (((mousePosition.x >= 1051) && (mousePosition.x <= 1150)) && ((mousePosition.y >= 540) && (mousePosition.y <= 715))) {
+		std::cout << "Cyan" << std::endl;
+		currentColor[0] = 105;
+		currentColor[1] = 194;
+		currentColor[2] = 193;
+		for (int i = 0; i < 3; i++) {
+			std::cout << currentColor[i] << " , ";
+		}
+		std::cout << std::endl;
+	}
+	if (((mousePosition.x >= 850) && (mousePosition.x <= 950)) && ((mousePosition.y >= 721) && (mousePosition.y <= 868))) {
+		std::cout << "Blue" << std::endl;
+		currentColor[0] = 22;
+		currentColor[1] = 24;
+		currentColor[2] = 152;
+		for (int i = 0; i < 3; i++) {
+			std::cout << currentColor[i] << " , ";
+		}
+		std::cout << std::endl;
+	}
+	if (((mousePosition.x >= 951) && (mousePosition.x <= 1050)) && ((mousePosition.y >= 721) && (mousePosition.y <= 868))) {
+		std::cout << "Yellow" << std::endl;
+		currentColor[0] = 244;
+		currentColor[1] = 245;
+		currentColor[2] = 154;
+		for (int i = 0; i < 3; i++) {
+			std::cout << currentColor[i] << " , ";
+		}
+		std::cout << std::endl;
+	}
+	if (((mousePosition.x >= 1051) && (mousePosition.x <= 1150)) && ((mousePosition.y >= 721) && (mousePosition.y <= 868))) {
+		std::cout << "Black" << std::endl;
+		currentColor[0] = 0;
+		currentColor[1] = 0;
+		currentColor[2] = 0;
+		for (int i = 0; i < 3; i++) {
+			std::cout << currentColor[i] << " , ";
+		}
+		std::cout << std::endl;
+	}
+}
+
+std::string Menu::displayNewWindow() {
+	sf::RenderWindow* window_ = new sf::RenderWindow(sf::VideoMode(500, 500), "Type Route Name", sf::Style::Titlebar | sf::Style::Close);
+	window_->setFramerateLimit(20);
+	window_->setPosition(sf::Vector2i(500, 400));
+
+	return "";
 }

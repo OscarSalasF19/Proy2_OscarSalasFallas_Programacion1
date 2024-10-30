@@ -2,7 +2,9 @@
 #include<iostream>
 #include<SFML/Graphics.hpp>
 #include"Button.h"
-#include"point.h"
+#include"Palette.h"
+#include"Route.h"
+#include"Server.h"
 class Menu
 {
 private:
@@ -14,15 +16,31 @@ private:
 
 	sf::RectangleShape map;
 
-	Button* AddPoints;
+	Button* createRoute;
+
+	Button* loadRoutes;
+
+	Button* exit;
+
+	Button* addPoints;
 
 	Button* deletePoints;
 
-	Button* loadPoints;
+	Button* SaveRoute;
 
-	Button* Palette;
+	Palette* palette;
 
-	Point* point;
+	Button* exitRouteMenu;
+
+	Route* currentRoute;
+
+	int currentColor[3];
+
+	int currentEvent;
+
+	Server* server;
+
+
 public:
 	Menu();
 
@@ -38,22 +56,25 @@ public:
 
 	void intializeAddButton();
 
-	void intializeDeleteButton();
-
 	void intializeLoadButton();
 
-	void initializeColorPalette();
+	void intializeExitButton();
 
-	void displayColorPalette();
+	void displayRouteMenu();
 
 	void eventScenarios();
 
-	void pressAddButton(sf::Vector2i mousePosition);
+	void pressAddButton(sf::Vector2f mousePosition);
 
-	void pressDeleteButton(sf::Vector2i mousePosition);
+	void pressLoadButton(sf::Vector2f mousePosition);
 
-	void pressLoadButton(sf::Vector2i mousePosition);
+	void pressExitButton(sf::Vector2f mousePosition);
 
-	void initializePoint();
+	void displayMainMenu();
 
+	void checkMouseRouteMenu(sf::Vector2f mousePosition);
+
+	void checkColorsClicks(sf::Vector2f mousePosition);
+
+	std::string displayNewWindow();
 };
