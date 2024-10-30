@@ -5,6 +5,7 @@ Menu::Menu() {
 	for (int i = 0; i < 3; i++) {
 		currentColor[i] = 0;
 	}
+	server = new Server();
 	currentEvent = 0;
 	initializeWindow();
 	intializeMap();
@@ -169,6 +170,15 @@ void Menu::checkMouseRouteMenu(sf::Vector2f mousePosition) {
 	if (((mousePosition.x >= 850) && (mousePosition.x <= 1150)) && ((mousePosition.y >= 430) && (mousePosition.y <= 530))) {
 		std::cout << "saving Route" << std::endl;
 		currentEvent = 0;
+		std::string routeName = displayNewWindow();
+		while (routeName == "")
+		{
+			routeName = displayNewWindow();
+		}
+		currentRoute->setName(routeName);
+		server->addRoute(currentRoute);
+		currentRoute = nullptr;
+		createRoute->setStatus(false);
 	}
 	if (((mousePosition.x >= 850) && (mousePosition.x <= 1150)) && ((mousePosition.y >= 890) && (mousePosition.y <= 985))) {
 		createRoute->setStatus(false);
@@ -243,9 +253,59 @@ void Menu::checkColorsClicks(sf::Vector2f mousePosition) {
 }
 
 std::string Menu::displayNewWindow() {
-	sf::RenderWindow* window_ = new sf::RenderWindow(sf::VideoMode(500, 500), "Type Route Name", sf::Style::Titlebar | sf::Style::Close);
-	window_->setFramerateLimit(20);
-	window_->setPosition(sf::Vector2i(500, 400));
+	sf::RenderWindow* newWindow = new sf::RenderWindow(sf::VideoMode(700, 400), "Type Route Name", sf::Style::Close);
+	sf::RectangleShape* box = new sf::RectangleShape(sf::Vector2f(400, 50));
+	box->setFillColor(sf::Color(91,91,91));
+	box->setPosition(sf::Vector2f(130, 50));
+	box->setOutlineThickness(4);
+	box->setOutlineColor(sf::Color::Black);
+	sf::RectangleShape* sqr = new sf::RectangleShape(sf::Vector2f(600, 50));
+	sqr->setFillColor(sf::Color(91, 91, 91));
+	sqr->setPosition(sf::Vector2f(50, 200));
+	sqr->setOutlineThickness(4);
+	sqr->setOutlineColor(sf::Color::Black);
+	newWindow->setFramerateLimit(20);
+	newWindow->setPosition(sf::Vector2i(500, 400));
+	sf::Font font;
+	font.loadFromFile("font.ttf");
+	sf::Text topWindow("Type the route Name", font);
+	sf::Text text("", font);
+	text.setPosition(100, 200);
+	text.setFillColor(sf::Color::White);
+	topWindow.setFillColor(sf::Color::White);
+	topWindow.setPosition(200, 50);
+	sf::Event newEvent;
+	std::string input;
 
-	return "";
+	while (newWindow->isOpen()) {
+		while (newWindow->pollEvent(newEvent)) {
+			if (newEvent.type == sf::Event::KeyPressed) {
+				if (newEvent.key.code == sf::Keyboard::Enter) {
+					newWindow->close();
+				}
+			}
+			if (newEvent.type == sf::Event::TextEntered) {
+				if (newEvent.text.unicode == '\b' && !input.empty()) {
+					input.pop_back();
+				}
+				else if (newEvent.text.unicode < 128 && newEvent.text.unicode != '\b') {
+					input += static_cast<char>(newEvent.text.unicode);
+				}
+				text.setString(input);
+			}
+			if (newEvent.type == sf::Event::Closed) {
+				newWindow->close();
+			}
+		}
+
+		newWindow->clear(sf::Color::White);
+		newWindow->draw(*box);
+		newWindow->draw(*sqr);
+		newWindow->draw(topWindow);
+		newWindow->draw(text);
+		newWindow->display();
+	}
+
+
+	return input;
 }
