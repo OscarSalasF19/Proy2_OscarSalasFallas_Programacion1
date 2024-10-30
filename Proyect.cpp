@@ -3,6 +3,7 @@
 
 int main() {
 	Menu* mainMenu = new Menu();
+	mainMenu->~Menu();
 
 
 	return 0;
