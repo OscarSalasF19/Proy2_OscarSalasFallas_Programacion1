@@ -13,6 +13,7 @@ Menu::Menu() {
 	intializeAddButton();
 	intializeLoadButton();
 	intializeExitButton();
+	initializeDeleteRouteButton();
 	displayWindow();
 }
 
@@ -38,6 +39,7 @@ void Menu::displayMainMenu() {
 		createRoute->displayButton(*window);
 		loadRoutes->displayButton(*window);
 		exit->displayButton(*window);
+		deleteRoute->displayButton(*window);
 
 
 	}
@@ -111,6 +113,7 @@ void Menu::eventScenarios() {
 			std::cout << "( " << mousePosition.x << ", " << mousePosition.y << ")\n";
 			pressAddButton(mousePosition);
 			pressLoadButton(mousePosition);
+			pressDeleteRouteButton(mousePosition);
 			pressExitButton(mousePosition);
 			if (createRoute->getStatus() == true) {
 				checkMouseRouteMenu(mousePosition);
@@ -129,7 +132,7 @@ void Menu::eventScenarios() {
 		break;
 	case sf::Event::KeyReleased:
 		if (evnt.key.code == sf::Keyboard::C) {
-			currentRoute->coutPoints();
+			std::cout << server->serialize();
 		}
 	}
 }
@@ -146,7 +149,7 @@ void Menu::pressAddButton(sf::Vector2f mousePosition) {
 void Menu::pressLoadButton(sf::Vector2f mousePosition) {
 	if (((mousePosition.x >= 850.f) && (mousePosition.x <= 1145.f)) && ((mousePosition.y >= 300.f) && (mousePosition.y <= 400.f)) && !createRoute->getStatus()) {
 		createRoute->setStatus(false);
-		loadRoutes->setStatus(true);
+		displayRouteNames();
 		std::cout << "loading route\n";
 	}
 }
@@ -316,4 +319,66 @@ std::string Menu::displayNewWindow() {
 
 
 	return input;
+}
+
+void Menu::displayRouteNames() {
+	if (server->getHeader() != nullptr) {
+		sf::Font font;
+		font.loadFromFile("font.ttf");
+		sf::Text Names(server->getRouteNames(), font);
+		Names.setFillColor(sf::Color::Black);
+		Names.setPosition(sf::Vector2f(850, 100));
+		std::string RouteName = "";
+		window->clear(sf::Color::White);
+		window->draw(map);
+		window->draw(Names);
+		window->display();
+
+		RouteName = displayNewWindow();
+		while (!server->IsTheRouteOnTheList(RouteName) || RouteName == "") {
+			RouteName = displayNewWindow();
+		}
+
+		currentRoute = server->getSpecificRoute(RouteName);
+		createRoute->setStatus(true);
+		loadRoutes->setStatus(false);
+		return;
+	}
+	std::cerr << "The list Is Empty" << std::endl;
+}
+
+void Menu:: initializeDeleteRouteButton() {
+	deleteRoute = new Button("delete Route", sf::Vector2f(300, 100), sf::Vector2f(850, 700));
+}
+
+void Menu::pressDeleteRouteButton(sf::Vector2f mousePosition) {
+	if (((mousePosition.x >= 850.f) && (mousePosition.x <= 1145.f)) && ((mousePosition.y >= 700.f) && (mousePosition.y <= 800.f)) && !createRoute->getStatus()) {
+		createRoute->setStatus(false);
+		displayRouteNamesToDelete();
+		std::cout << "deleting Route\n";
+	}
+}
+
+void Menu::displayRouteNamesToDelete() {
+	if (server->getHeader() != nullptr) {
+		sf::Font font;
+		font.loadFromFile("font.ttf");
+		sf::Text Names(server->getRouteNames(), font);
+		Names.setFillColor(sf::Color::Black);
+		Names.setPosition(sf::Vector2f(850, 100));
+		std::string RouteName = "";
+		window->clear(sf::Color::White);
+		window->draw(map);
+		window->draw(Names);
+		window->display();
+
+		RouteName = displayNewWindow();
+		while (!server->IsTheRouteOnTheList(RouteName) || RouteName == "") {
+			RouteName = displayNewWindow();
+		}
+		server->deleteRoute(RouteName);
+		server->saveRoutes();
+		std::cout << "cai despues de guardar";
+	}
+	std::cerr << "The list Is Empty" << std::endl;
 }

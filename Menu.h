@@ -20,6 +20,8 @@ private:
 
 	Button* loadRoutes;
 
+	Button* deleteRoute;
+
 	Button* exit;
 
 	Button* addPoints;
@@ -77,4 +79,15 @@ public:
 	void checkColorsClicks(sf::Vector2f mousePosition);
 
 	std::string displayNewWindow();
+	
+	void displayRouteNames();
+
+	void initializeDeleteRouteButton();
+
+	void pressDeleteRouteButton(sf::Vector2f mousePosition);
+	
+	void displayRouteNamesToDelete();
+
+
+
 };

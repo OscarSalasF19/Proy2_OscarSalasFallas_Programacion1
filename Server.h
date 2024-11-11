@@ -19,5 +19,10 @@ public:
 	std::string serialize();
 	void saveRoutes();
 	void loadRoutes();
+	std::string getRouteNames();
+
+	Route* getSpecificRoute(std::string routeName);
+	Route* getHeader();
+
 };
 
