@@ -51,3 +51,7 @@ sf::Vector2f Point::getPosition() {
 void Point::drawPoint(sf::RenderWindow* window) {
 	window->draw(*point);
 }
+
+std::string Point::serialize() {
+	return std::to_string((int)pointPosition.x) + "," + std::to_string((int)pointPosition.y) + "|" + std::to_string(pointColor[0]) + "," + std::to_string(pointColor[1]) + "," + std::to_string(pointColor[2]) + "\n";
+}
