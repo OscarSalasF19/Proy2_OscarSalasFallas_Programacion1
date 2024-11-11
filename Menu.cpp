@@ -6,6 +6,7 @@ Menu::Menu() {
 		currentColor[i] = 0;
 	}
 	server = new Server();
+	server->loadRoutes();
 	currentEvent = 0;
 	initializeWindow();
 	intializeMap();
@@ -170,15 +171,22 @@ void Menu::checkMouseRouteMenu(sf::Vector2f mousePosition) {
 	if (((mousePosition.x >= 850) && (mousePosition.x <= 1150)) && ((mousePosition.y >= 430) && (mousePosition.y <= 530))) {
 		std::cout << "saving Route" << std::endl;
 		currentEvent = 0;
-		std::string routeName = displayNewWindow();
-		while (routeName == "")
-		{
-			routeName = displayNewWindow();
+		if (currentRoute->getName() == "") {
+			std::string routeName = displayNewWindow();
+			while (routeName == "" || server->IsTheRouteOnTheList(routeName))
+			{
+				routeName = displayNewWindow();
+			}
+			currentRoute->setName(routeName);
+			server->addRoute(currentRoute);
+			currentRoute = nullptr;
+			std::cout << "ruta guardada" << std::endl;
+			server->saveRoutes();
 		}
-		currentRoute->setName(routeName);
-		server->addRoute(currentRoute);
-		currentRoute = nullptr;
-		createRoute->setStatus(false);
+		else {
+			currentRoute = nullptr;
+		}
+			createRoute->setStatus(false);
 	}
 	if (((mousePosition.x >= 850) && (mousePosition.x <= 1150)) && ((mousePosition.y >= 890) && (mousePosition.y <= 985))) {
 		createRoute->setStatus(false);

@@ -23,5 +23,7 @@ public:
 	sf::Vector2f getPosition();
 
 	void drawPoint(sf::RenderWindow* window);
+
+	std::string serialize();
 };
 

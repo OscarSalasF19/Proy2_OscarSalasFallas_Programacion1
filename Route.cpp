@@ -146,3 +146,14 @@ void Route::checkClick(sf::Vector2f mouseClick) {
 
 	}
 }
+
+std::string Route::serialize() {
+	std::string line = routeName + "\n";
+	Point* current = header;
+	while (current)
+	{
+		line += current->serialize();
+		current = current->getNext();
+	}
+	return line;
+}

@@ -27,4 +27,7 @@ public:
 	void coutPoints();
 
 	void checkClick(sf::Vector2f mouseClick);
+	
+	std::string serialize();
+
 };
