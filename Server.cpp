@@ -18,43 +18,63 @@ void Server::addRoute(Route* newRoute) {
 
 void Server::deleteRoute(std::string routeName) {
 
-	Route* actual = Header;
-
-	while (actual->getName() != routeName || actual->getNext() != nullptr) {
-		actual = actual->getNext();
+	Route* current = Header;
+	
+	while (current->getName() != routeName && current) {
+		current = current->getNext();
 	}
-
-	if (actual == Header) {
-		Header = actual->getNext();
-	}
-	if (actual->getName() == routeName) {
-		actual->getPrev()->setNext(actual->getNext());
-		actual->getNext()->setprev(actual->getPrev());
-		actual->setNext(nullptr);
-		actual->setprev(nullptr);
-
-	}
+	if (current->getName() == routeName) {
+		if (current == Header) {
+			if (current->getNext() == nullptr && current->getPrev() == nullptr) {
+				Header = nullptr;
+				delete current;
+				return;
+			}
+			current->getNext()->setprev(nullptr);
+			Header = current->getNext();
+			delete current;
+			return;
+		}
+		else if (current->getNext() == nullptr) {
+			current->getPrev()->setNext(current->getNext());
+			current->setprev(nullptr);
+			current->setNext(nullptr);
+			delete current;
+			return;
+		}else{
+			current->getPrev()->setNext(current->getNext());
+			current->getNext()->setprev(current->getPrev());
+			current->setNext(nullptr);
+			current->setprev(nullptr);
+			delete current;
+			return;
+		}
+	}	
 }
 
 bool Server::IsTheRouteOnTheList(std::string routeName) {
 	Route* current = Header;
 
-	if (Header) {
-		if (current->getNext() == nullptr) {
-			if (current->getName() == routeName) {
-				return true;
-			}
+	while (current) {
+		if (current->getName() == routeName) {
+			return true;
 		}
-		else {
-			while (current->getNext() != nullptr) {
-				if (current->getName() == routeName) {
-					return true;
-				}
-				current = current->getNext();
-			}
-		}
+		current = current->getNext();
 	}
 	return false;
+}
+
+std::string Server::serialize() {
+	std::string line = "";
+	Route* current = Header;
+
+	while (current) {
+		line += current->serialize();
+		current = current->getNext();
+	}
+
+	return line;
+
 }
 
 void Server::saveRoutes() {
@@ -116,4 +136,30 @@ void Server::loadRoutes() {
 	}
 	inFile.close();
 }
+
+std::string Server::getRouteNames() {
+	Route* current = Header;
+	std::string line = "";
+	while (current) {
+		line += current->getName() + "\n";
+		current = current->getNext();
+	}
+
+	return line;
+}
 	
+Route* Server::getSpecificRoute(std::string routeName) {
+	Route* current = Header;
+
+	while (current) {
+		if (current->getName() == routeName) {
+			return current;
+		}
+		current = current->getNext();
+	}
+	return nullptr;
+}
+
+Route* Server::getHeader() {
+	return Header;
+}
