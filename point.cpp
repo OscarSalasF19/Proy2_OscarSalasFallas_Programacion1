@@ -1,6 +1,6 @@
 #include "Point.h"
 Point::Point(sf::Vector2f pointPosition, int pointColor[]) {
-	point = new sf::CircleShape(10.f);
+	point = new sf::CircleShape(12.f);
 	next = nullptr;
 	prev = nullptr;
 	for (int i = 0; i < 3; i++) {
@@ -54,4 +54,8 @@ void Point::drawPoint(sf::RenderWindow* window) {
 
 std::string Point::serialize() {
 	return std::to_string((int)pointPosition.x) + "," + std::to_string((int)pointPosition.y) + "|" + std::to_string(pointColor[0]) + "," + std::to_string(pointColor[1]) + "," + std::to_string(pointColor[2]) + "\n";
+}
+
+int Point::getColor(int position) {
+	return pointColor[position];
 }

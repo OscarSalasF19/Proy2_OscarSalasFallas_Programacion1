@@ -2,14 +2,10 @@
 
 
 void Server::addRoute(Route* newRoute) {
-	std::cout << "cai al entrar a la funcion" << std::endl;
 	if (!Header) {
-		std::cout << "cai al entrar al primer if" << std::endl;
-
 		Header = newRoute;
 	}
 	else {
-		std::cout << "cai al entrar al segundo if" << std::endl;
 		newRoute->setNext(Header);
 		Header->setprev(newRoute);
 		Header = newRoute;

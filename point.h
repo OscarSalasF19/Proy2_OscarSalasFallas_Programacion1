@@ -25,5 +25,7 @@ public:
 	void drawPoint(sf::RenderWindow* window);
 
 	std::string serialize();
+
+	int getColor(int position);
 };
 

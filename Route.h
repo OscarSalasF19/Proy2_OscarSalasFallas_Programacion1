@@ -30,4 +30,8 @@ public:
 	
 	std::string serialize();
 
+	sf::Vector2f cubicBezier(float size, sf::Vector2f point1, sf::Vector2f midPoint1, sf::Vector2f midPoint2, sf::Vector2f point2);
+
+	void displayLine(sf::RenderWindow* window, Point* current);
+
 };

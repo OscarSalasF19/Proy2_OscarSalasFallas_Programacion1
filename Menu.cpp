@@ -110,7 +110,7 @@ void Menu::eventScenarios() {
 			sf::Vector2f mousePosition;
 			mousePosition.x = sf::Mouse::getPosition(*window).x;
 			mousePosition.y = sf::Mouse::getPosition(*window).y;
-			std::cout << "( " << mousePosition.x << ", " << mousePosition.y << ")\n";
+			std::cout << mousePosition.x << "," << mousePosition.y << "\n";
 			pressAddButton(mousePosition);
 			pressLoadButton(mousePosition);
 			pressDeleteRouteButton(mousePosition);
@@ -118,12 +118,10 @@ void Menu::eventScenarios() {
 			if (createRoute->getStatus() == true) {
 				checkMouseRouteMenu(mousePosition);
 			}
-			if (currentEvent == 1 && mousePosition.x < 760.f) {
-				std::cout << "llegue a aqui" << std::endl;
+			if (currentEvent == 1 && (mousePosition.x < 725.f && mousePosition.x > 70 && mousePosition.y > 180 && mousePosition.y < 865)) {
 				currentRoute->addPoint(mousePosition, currentColor);
 			}
 			if (currentEvent == 2 && mousePosition.x < 760.f) {
-				std::cout << "empieza comprobacion" << std::endl;
 				currentRoute->checkClick(mousePosition);
 			}
 
@@ -183,7 +181,6 @@ void Menu::checkMouseRouteMenu(sf::Vector2f mousePosition) {
 			currentRoute->setName(routeName);
 			server->addRoute(currentRoute);
 			currentRoute = nullptr;
-			std::cout << "ruta guardada" << std::endl;
 			server->saveRoutes();
 		}
 		else {
@@ -205,31 +202,18 @@ void Menu::checkColorsClicks(sf::Vector2f mousePosition) {
 		currentColor[0] = 240;
 		currentColor[1] = 150;
 		currentColor[2] = 130;
-		for (int i = 0; i < 3; i++) {
-			std::cout << currentColor[i] << " , ";
-		}
-		std::cout << std::endl;
 	}
 	if (((mousePosition.x >= 951) && (mousePosition.x <= 1050)) && ((mousePosition.y >= 540) && (mousePosition.y <= 715))) {
 		std::cout << "Pink" << std::endl;
 		currentColor[0] = 238;
 		currentColor[1] = 163;
 		currentColor[2] = 225;
-
-		for (int i = 0; i < 3; i++) {
-			std::cout << currentColor[i] << " , ";
-		}
-		std::cout << std::endl;
 	}
 	if (((mousePosition.x >= 1051) && (mousePosition.x <= 1150)) && ((mousePosition.y >= 540) && (mousePosition.y <= 715))) {
 		std::cout << "Cyan" << std::endl;
 		currentColor[0] = 105;
 		currentColor[1] = 194;
 		currentColor[2] = 193;
-		for (int i = 0; i < 3; i++) {
-			std::cout << currentColor[i] << " , ";
-		}
-		std::cout << std::endl;
 	}
 	if (((mousePosition.x >= 850) && (mousePosition.x <= 950)) && ((mousePosition.y >= 721) && (mousePosition.y <= 868))) {
 		std::cout << "Blue" << std::endl;
@@ -246,20 +230,12 @@ void Menu::checkColorsClicks(sf::Vector2f mousePosition) {
 		currentColor[0] = 244;
 		currentColor[1] = 245;
 		currentColor[2] = 154;
-		for (int i = 0; i < 3; i++) {
-			std::cout << currentColor[i] << " , ";
-		}
-		std::cout << std::endl;
 	}
 	if (((mousePosition.x >= 1051) && (mousePosition.x <= 1150)) && ((mousePosition.y >= 721) && (mousePosition.y <= 868))) {
 		std::cout << "Black" << std::endl;
 		currentColor[0] = 0;
 		currentColor[1] = 0;
 		currentColor[2] = 0;
-		for (int i = 0; i < 3; i++) {
-			std::cout << currentColor[i] << " , ";
-		}
-		std::cout << std::endl;
 	}
 }
 
@@ -336,6 +312,7 @@ void Menu::displayRouteNames() {
 
 		RouteName = displayNewWindow();
 		while (!server->IsTheRouteOnTheList(RouteName) || RouteName == "") {
+			std::cout << "invalid Data, try again" << std::endl;
 			RouteName = displayNewWindow();
 		}
 
@@ -374,11 +351,11 @@ void Menu::displayRouteNamesToDelete() {
 
 		RouteName = displayNewWindow();
 		while (!server->IsTheRouteOnTheList(RouteName) || RouteName == "") {
+			std::cout << "invalid Data, try again" << std::endl;
 			RouteName = displayNewWindow();
 		}
 		server->deleteRoute(RouteName);
 		server->saveRoutes();
-		std::cout << "cai despues de guardar";
 	}
 	std::cerr << "The list Is Empty" << std::endl;
 }
