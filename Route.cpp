@@ -23,19 +23,11 @@ void Route::addPoint(sf::Vector2f pointPosition, int pointColor[]) {
 
 	if (!header) {
 		header = newPoint;
-		std::cout << "guarde 1" << std::endl;
 	}
 	else {
 		newPoint->setNext(header);
 		header->setPrev(newPoint);
 		header = newPoint;
-		std::cout << "guardo el punto " << header->getPosition().x << " , " << header->getPosition().y << std::endl;
-		if (header->getNext()) {
-			std::cout << "guardo el punto " << header->getNext()->getPosition().x << " , " << header->getNext()->getPosition().y << std::endl;
-
-		}
-
-
 	}
 }
 
@@ -103,6 +95,9 @@ void Route::drawPoints(sf::RenderWindow* window) {
 		while (current)
 		{
 			current->drawPoint(window);
+			if (current->getNext() != nullptr) {
+				displayLine(window, current);
+			}
 			current = current->getNext();
 		}
 
@@ -114,7 +109,6 @@ void Route::coutPoints() {
 	Point* current = header;
 
 	while (current->getNext() != NULL) {
-		std::cout << "the point is (" << current->getPosition().x << " , " << current->getPosition().y << ") \n";
 		current = current->getNext();
 	}
 }
@@ -122,28 +116,21 @@ void Route::coutPoints() {
 void Route::checkClick(sf::Vector2f mouseClick) {
 	Point* current = header;
 	bool isThePointInTheList = false;
-	std::cout << "entre a comprobacion" << std::endl;
 	while (current != nullptr && !isThePointInTheList) {
-		std::cout << "entre al while" << std::endl;
 		float dx = mouseClick.x - current->getPosition().x;
 		float dy = mouseClick.y - current->getPosition().y;
 		float distance = sqrt(dx * dx + dy * dy);
 
 		if (distance <= 10) {
 			isThePointInTheList = true;
-			std::cout << "entre al primer if" << std::endl;
 		}
 		else {
 			current = current->getNext();
-			std::cout << "entre al segundo if" << std::endl;
-
 		}
 	}
 
 	if (isThePointInTheList) {
-		std::cout << "empiezo a borrar";
 		deletePoint(current);
-
 	}
 }
 
@@ -157,3 +144,49 @@ std::string Route::serialize() {
 	}
 	return line;
 }
+
+sf::Vector2f Route::cubicBezier(float t, sf::Vector2f point1, sf::Vector2f midPoint1, sf::Vector2f midPoint2, sf::Vector2f point2) {
+	float u = 1 - t;
+	float tt = t * t;
+	float uu = u* u;
+	float uuu = uu * u;
+	float ttt = tt * t;
+
+	sf::Vector2f point = uuu * point1;
+	point += 3 * uu * t * midPoint1;
+	point += 3 * u * tt * midPoint2;
+	point += ttt * point2;
+	
+	return point;
+}
+
+void Route::displayLine(sf::RenderWindow* window, Point* current) {
+	sf::Vector2f Point1 = current->getPosition();
+	sf::Vector2f Point2 = current->getNext()->getPosition();
+	sf::Vector2f midPoint1(((Point1.x + Point2.x) / 2) + 50, ((Point1.y + Point2.y) / 2) + 50);
+	sf::Vector2f midPoint2(((Point1.x + Point2.x) / 2) -50, ((Point1.y + Point2.y) / 2) - 50);
+
+	
+
+	sf::CircleShape curvedPoints[100];
+	int size = 100;
+	int amount = 0;
+
+	for (float t = 0; t <= 1; t += 0.01f) {
+		sf::Vector2f point = cubicBezier(t, Point1, midPoint1, midPoint2, Point2);
+		if (amount < size) {
+			curvedPoints[amount].setRadius(6);
+			curvedPoints[amount].setOrigin(curvedPoints[amount].getRadius(), curvedPoints[amount].getRadius());
+			curvedPoints[amount].setPosition(cubicBezier(t, Point1, midPoint1, midPoint2, Point2));
+			curvedPoints[amount].setFillColor(sf::Color(current->getColor(0), current->getColor(1), current->getColor(2)));
+			amount++;
+		}
+
+	}
+
+
+	for (int i = 0; i < amount; i++) {
+		window->draw(curvedPoints[i]);
+	}
+}
+
