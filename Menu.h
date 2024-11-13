@@ -42,7 +42,6 @@ private:
 
 	Server* server;
 
-
 public:
 	Menu();
 
@@ -87,7 +86,4 @@ public:
 	void pressDeleteRouteButton(sf::Vector2f mousePosition);
 	
 	void displayRouteNamesToDelete();
-
-
-
 };

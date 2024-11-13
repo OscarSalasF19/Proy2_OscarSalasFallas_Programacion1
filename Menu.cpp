@@ -121,7 +121,7 @@ void Menu::eventScenarios() {
 			if (currentEvent == 1 && (mousePosition.x < 725.f && mousePosition.x > 70 && mousePosition.y > 180 && mousePosition.y < 865)) {
 				currentRoute->addPoint(mousePosition, currentColor);
 			}
-			if (currentEvent == 2 && mousePosition.x < 760.f) {
+			if (currentEvent == 2 && (mousePosition.x < 725.f && mousePosition.x > 70 && mousePosition.y > 180 && mousePosition.y < 865)) {
 				currentRoute->checkClick(mousePosition);
 			}
 
